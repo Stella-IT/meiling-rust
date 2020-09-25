@@ -27,7 +27,7 @@ CREATE TABLE `meiling`.`user`
     ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `meiling`.`group`
+-- Table `meiling`.`Group`
 -- -----------------------------------------------------
 
 CREATE TABLE `meiling`.`group`
