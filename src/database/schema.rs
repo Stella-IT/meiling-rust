@@ -1,49 +1,49 @@
 table! {
     access_token (id, user) {
-        id -> Char,
+        id -> Binary,
         token -> Char,
-        issue_date -> Nullable<Datetime>,
-        user -> Char,
+        issue_date -> Datetime,
+        user -> Binary,
     }
 }
 
 table! {
     use crate::database::enums::AuthenticationMethodMapping;
-    use diesel::sql_types::{Char, Text, Varchar};
+    use diesel::sql_types::{Binary, Text, Varchar};
     auth_info (id, user_id) {
-        id -> Char,
+        id -> Binary,
         auth_method -> AuthenticationMethodMapping,
         key -> Text,
         name -> Varchar,
-        user_id -> Char,
+        user_id -> Binary,
     }
 }
 
 table! {
     client (id, owner) {
-        id -> Char,
+        id -> Binary,
         name -> Varchar,
         secret -> Varchar,
         author -> Nullable<Varchar>,
         contact -> Nullable<Varchar>,
         image_url -> Nullable<Text>,
-        owner -> Char,
+        owner -> Binary,
         privacy_policy -> Nullable<Text>,
     }
 }
 
 table! {
     client_permission_requirement (client, permission_group) {
-        client -> Char,
-        permission_group -> Char,
+        client -> Binary,
+        permission_group -> Binary,
     }
 }
 
 table! {
     email (id, user) {
-        id -> Char,
+        id -> Binary,
         address -> Varchar,
-        user -> Char,
+        user -> Binary,
         registration_date -> Nullable<Datetime>,
         is_validated -> Tinyint,
     }
@@ -51,66 +51,66 @@ table! {
 
 table! {
     group (id) {
-        id -> Char,
+        id -> Binary,
         name -> Varchar,
     }
 }
 
 table! {
     group_has_permission_group (permission_group, group) {
-        permission_group -> Char,
-        group -> Char,
+        permission_group -> Binary,
+        group -> Binary,
     }
 }
 
 table! {
     use crate::database::enums::LogTypeMapping;
-    use diesel::sql_types::{Char, Text, Varchar};
+    use diesel::sql_types::{Binary, Text, Varchar};
     log (id, initiator_user, initiator_client) {
-        id -> Char,
+        id -> Binary,
         initiator_ip -> Varchar,
         data -> Text,
         #[sql_name = "type"]
         log_type -> LogTypeMapping,
-        initiator_user -> Char,
-        initiator_client -> Char,
+        initiator_user -> Binary,
+        initiator_client -> Binary,
     }
 }
 
 table! {
     permission (id) {
-        id -> Char,
+        id -> Binary,
         name -> Varchar,
     }
 }
 
 table! {
     permission_group (id) {
-        id -> Char,
+        id -> Binary,
         name -> Varchar,
     }
 }
 
 table! {
     permission_group_has_permission (permission, permission_group) {
-        permission -> Char,
-        permission_group -> Char,
+        permission -> Binary,
+        permission_group -> Binary,
     }
 }
 
 table! {
     phone_number (id, user) {
-        id -> Char,
+        id -> Binary,
         itu_code -> Integer,
         domestic_number -> Varchar,
-        user -> Char,
+        user -> Binary,
         is_validated -> Tinyint,
     }
 }
 
 table! {
     policy (id) {
-        id -> Char,
+        id -> Binary,
         name -> Varchar,
         description -> Nullable<Text>,
         url -> Nullable<Text>,
@@ -120,16 +120,16 @@ table! {
 
 table! {
     refresh_token (id, user) {
-        id -> Char,
+        id -> Binary,
         token -> Char,
-        issue_date -> Nullable<Datetime>,
-        user -> Char,
+        issue_date -> Datetime,
+        user -> Binary,
     }
 }
 
 table! {
     user (id) {
-        id -> Char,
+        id -> Binary,
         name -> Varchar,
         creation_date -> Datetime,
         image_url -> Nullable<Text>,
@@ -139,29 +139,29 @@ table! {
 
 table! {
     user_accepted_client (client_id, user_id) {
-        client_id -> Char,
-        user_id -> Char,
+        client_id -> Binary,
+        user_id -> Binary,
     }
 }
 
 table! {
     user_has_group (user, group) {
-        user -> Char,
-        group -> Char,
+        user -> Binary,
+        group -> Binary,
     }
 }
 
 table! {
     user_has_permission_group (permission_group_id, user_id) {
-        permission_group_id -> Char,
-        user_id -> Char,
+        permission_group_id -> Binary,
+        user_id -> Binary,
     }
 }
 
 table! {
     user_policy_consent (policy_id, user_id) {
-        policy_id -> Char,
-        user_id -> Char,
+        policy_id -> Binary,
+        user_id -> Binary,
         consent -> Tinyint,
     }
 }
