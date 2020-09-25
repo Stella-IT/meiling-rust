@@ -3,9 +3,9 @@ use std::sync::Arc;
 use actix_web::{App, Error, get, HttpResponse, HttpServer, post, Responder, web};
 use juniper::http::{GraphQLRequest, playground::playground_source};
 
-use crate::schema::{create_schema, Schema};
+use crate::gql::schema::{create_schema, Schema};
 
-mod schema;
+mod gql;
 
 #[get("/graphql")]
 async fn graphiql() -> HttpResponse {
