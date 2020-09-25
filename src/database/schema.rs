@@ -8,11 +8,11 @@ table! {
 }
 
 table! {
-    use crate::database::enums::AuthMethodMapping;
+    use crate::database::enums::AuthenticationMethodMapping;
     use diesel::sql_types::{Char, Text, Varchar};
     auth_info (id, user_id) {
         id -> Char,
-        auth_method -> AuthMethodMapping,
+        auth_method -> AuthenticationMethodMapping,
         key -> Text,
         name -> Varchar,
         user_id -> Char,
@@ -71,7 +71,7 @@ table! {
         initiator_ip -> Varchar,
         data -> Text,
         #[sql_name = "type"]
-        type_ -> LogTypeMapping,
+        log_type -> LogTypeMapping,
         initiator_user -> Char,
         initiator_client -> Char,
     }
