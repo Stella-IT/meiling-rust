@@ -16,7 +16,7 @@ USE `meiling`;
 
 CREATE TABLE `meiling`.`user`
 (
-    `id`            CHAR(36) NOT NULL DEFAULT UUID(),
+    `id`            CHAR(36)    NOT NULL DEFAULT UUID(),
     `name`          VARCHAR(45) NOT NULL,
     `creation_date` DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `image_url`     TEXT        NULL,
@@ -32,7 +32,7 @@ CREATE TABLE `meiling`.`user`
 
 CREATE TABLE `meiling`.`group`
 (
-    `id`   CHAR(36) NOT NULL DEFAULT UUID(),
+    `id`   CHAR(36)    NOT NULL DEFAULT UUID(),
     `name` VARCHAR(32) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
@@ -70,13 +70,13 @@ CREATE TABLE `meiling`.`user_has_group`
 
 CREATE TABLE `meiling`.`email`
 (
-    `id`                CHAR(36) NOT NULL DEFAULT UUID(),
-    `email`             VARCHAR(64) NOT NULL,
+    `id`                CHAR(36)    NOT NULL DEFAULT UUID(),
+    address             VARCHAR(64) NOT NULL,
     `user`              CHAR(36)    NOT NULL,
     `registration_date` DATETIME GENERATED ALWAYS AS (CURRENT_TIMESTAMP) VIRTUAL,
     `is_validated`      TINYINT     NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`, `user`),
-    UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+    UNIQUE INDEX `email_UNIQUE` (address ASC) VISIBLE,
     INDEX `fk_email_user1_idx` (`user` ASC) VISIBLE,
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
     CONSTRAINT `fk_email_user1`
@@ -93,7 +93,7 @@ CREATE TABLE `meiling`.`email`
 
 CREATE TABLE `meiling`.`phone_number`
 (
-    `id`              CHAR(36) NOT NULL DEFAULT UUID(),
+    `id`              CHAR(36)    NOT NULL DEFAULT UUID(),
     `itu_code`        INT         NOT NULL,
     `domestic_number` VARCHAR(16) NOT NULL,
     `user`            CHAR(36)    NOT NULL,
@@ -114,7 +114,7 @@ CREATE TABLE `meiling`.`phone_number`
 
 CREATE TABLE `meiling`.`permission`
 (
-    `id`   CHAR(36) NOT NULL DEFAULT UUID(),
+    `id`   CHAR(36)    NOT NULL DEFAULT UUID(),
     `name` VARCHAR(45) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE
@@ -127,7 +127,7 @@ CREATE TABLE `meiling`.`permission`
 
 CREATE TABLE `meiling`.`permission_group`
 (
-    `id`   CHAR(36) NOT NULL DEFAULT UUID(),
+    `id`   CHAR(36)    NOT NULL DEFAULT UUID(),
     `name` VARCHAR(45) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE
@@ -212,7 +212,7 @@ CREATE TABLE `meiling`.`user_has_permission_group`
 
 CREATE TABLE `meiling`.`client`
 (
-    `id`             CHAR(36) NOT NULL DEFAULT UUID(),
+    `id`             CHAR(36)     NOT NULL DEFAULT UUID(),
     `name`           VARCHAR(45)  NOT NULL,
     `secret`         VARCHAR(256) NOT NULL,
     `author`         VARCHAR(32)  NULL,
@@ -285,7 +285,7 @@ CREATE TABLE `meiling`.`user_accepted_client`
 
 CREATE TABLE `meiling`.`refresh_token`
 (
-    `id`         CHAR(36) NOT NULL DEFAULT UUID(),
+    `id`         CHAR(36)  NOT NULL DEFAULT UUID(),
     `token`      CHAR(128) NOT NULL,
     `issue_date` DATETIME GENERATED ALWAYS AS (CURRENT_TIMESTAMP) VIRTUAL,
     `user`       CHAR(36)  NOT NULL,
@@ -307,7 +307,7 @@ CREATE TABLE `meiling`.`refresh_token`
 
 CREATE TABLE `meiling`.`access_token`
 (
-    `id`         CHAR(36) NOT NULL DEFAULT UUID(),
+    `id`         CHAR(36)  NOT NULL DEFAULT UUID(),
     `token`      CHAR(128) NOT NULL,
     `issue_date` DATETIME GENERATED ALWAYS AS (CURRENT_TIMESTAMP) VIRTUAL,
     `user`       CHAR(36)  NOT NULL,
@@ -329,9 +329,9 @@ CREATE TABLE `meiling`.`access_token`
 
 CREATE TABLE `meiling`.`log`
 (
-    `id`               CHAR(36) NOT NULL DEFAULT UUID(),
+    `id`               CHAR(36)                                                          NOT NULL DEFAULT UUID(),
     `initiator_ip`     VARCHAR(40)                                                       NOT NULL DEFAULT '0.0.0.0',
-    `log`              VARCHAR(256)                                                      NOT NULL,
+    data               TEXT                                                              NOT NULL,
     `type`             ENUM ('job_start', 'job_log', 'job_end', 'user_log', 'audit_log') NOT NULL,
     `initiator_user`   CHAR(36)                                                          NULL,
     `initiator_client` CHAR(36)                                                          NULL,
@@ -357,8 +357,8 @@ CREATE TABLE `meiling`.`log`
 
 CREATE TABLE `meiling`.`auth_info`
 (
-    `id`          CHAR(36) NOT NULL DEFAULT UUID(),
-    `auth_method` ENUM ('password', 'pubkey', 'one_time_password') NOT NULL,
+    `id`          CHAR(36)                                         NOT NULL DEFAULT UUID(),
+    `auth_method` ENUM ('Password', 'pubkey', 'one_time_password') NOT NULL,
     `key`         TEXT                                             NOT NULL,
     `name`        VARCHAR(16)                                      NOT NULL,
     `user_id`     CHAR(36)                                         NOT NULL,
@@ -379,7 +379,7 @@ CREATE TABLE `meiling`.`auth_info`
 
 CREATE TABLE `meiling`.`policy`
 (
-    `id`          CHAR(36) NOT NULL DEFAULT UUID(),
+    `id`          CHAR(36)    NOT NULL DEFAULT UUID(),
     `name`        VARCHAR(64) NOT NULL,
     `description` TEXT        NULL,
     `url`         TEXT        NULL,
@@ -419,7 +419,7 @@ CREATE TABLE `meiling`.`user_policy_consent`
 
 CREATE VIEW `user_emails` AS
 (
-SELECT user.id AS user_id, name, creation_date, email
+SELECT user.id AS user_id, name, creation_date, address
 FROM user
          JOIN email ON user.id = email.user);
 
