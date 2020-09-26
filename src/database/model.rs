@@ -65,6 +65,22 @@ pub struct NewClient {
 }
 
 #[derive(Associations, Queryable, Debug, Clone, PartialEq)]
+#[belongs_to(Client)]
+#[belongs_to(PermissionGroup)]
+#[table_name = "client_permission_requirement"]
+pub struct ClientPermissionRequirement {
+    pub client_id: Vec<u8>,
+    pub permission_group_id: Vec<u8>,
+}
+
+#[derive(Insertable)]
+#[table_name = "client_permission_requirement"]
+pub struct NewClientPermissionRequirement {
+    pub client_id: Vec<u8>,
+    pub permission_group_id: Vec<u8>,
+}
+
+#[derive(Associations, Queryable, Debug, Clone, PartialEq)]
 #[belongs_to(User)]
 #[table_name = "email"]
 pub struct Email {
@@ -94,6 +110,22 @@ pub struct Group {
 #[table_name = "group"]
 pub struct NewGroup {
     pub name: String,
+}
+
+#[derive(Associations, Queryable, Debug, Clone, PartialEq)]
+#[belongs_to(Group)]
+#[belongs_to(PermissionGroup)]
+#[table_name = "group_has_permission_group"]
+pub struct GroupHasPermissionGroup {
+    pub group_id: Vec<u8>,
+    pub permission_group_id: Vec<u8>,
+}
+
+#[derive(Insertable)]
+#[table_name = "group_has_permission_group"]
+pub struct NewGroupHasPermissionGroup {
+    pub group_id: Vec<u8>,
+    pub permission_group_id: Vec<u8>,
 }
 
 #[derive(Queryable, Debug, Clone, PartialEq)]
@@ -138,6 +170,22 @@ pub struct PermissionGroup {
 #[table_name = "permission_group"]
 pub struct NewPermissionGroup {
     pub name: String,
+}
+
+#[derive(Associations, Queryable, Debug, Clone, PartialEq)]
+#[belongs_to(Permission)]
+#[belongs_to(PermissionGroup)]
+#[table_name = "permission_group_has_permission"]
+pub struct PermissionGroupHasPermission {
+    pub permission_id: Vec<u8>,
+    pub permission_group_id: Vec<u8>,
+}
+
+#[derive(Insertable)]
+#[table_name = "permission_group_has_permission"]
+pub struct NewPermissionGroupHasPermission {
+    pub permission_id: Vec<u8>,
+    pub permission_group_id: Vec<u8>,
 }
 
 #[derive(Associations, Queryable, Debug, Clone, PartialEq)]
@@ -212,6 +260,22 @@ pub struct NewUser {
     pub user_id: String,
     pub image_url: Option<String>,
     pub gender: Option<String>,
+}
+
+#[derive(Associations, Queryable, Debug, Clone, PartialEq)]
+#[belongs_to(Client)]
+#[belongs_to(User)]
+#[table_name = "user_accepted_client"]
+pub struct UserAcceptedClient {
+    pub client_id: Vec<u8>,
+    pub user_id: Vec<u8>,
+}
+
+#[derive(Insertable)]
+#[table_name = "user_accepted_client"]
+pub struct NewUserAcceptedClient {
+    pub client_id: Vec<u8>,
+    pub user_id: Vec<u8>,
 }
 
 #[derive(Associations, Queryable, Debug, Clone, PartialEq)]
