@@ -1,3 +1,4 @@
+use std::convert::TryFrom;
 use std::error::Error;
 use std::str::FromStr;
 
@@ -17,17 +18,19 @@ pub struct User {
     pub gender: Option<String>,
 }
 
-impl User {
-    pub fn from_model(user: &model::User) -> Result<Self, Box<dyn Error>> {
-        let uuid: Uuid = Uuid::from_str(&String::from_utf8(user.id.clone())?)?;
-        Ok(Self {
-            uuid: uuid.to_string(),
-            name: user.name.clone(),
-            user_id: user.user_id.clone(),
+impl TryFrom<model::User> for User {
+    type Error = Box<dyn Error>;
+
+    fn try_from(user: model::User) -> Result<Self, Self::Error> {
+        let value = Self {
+            uuid: Uuid::from_str(&String::from_utf8(user.id.clone())?)?.to_string(),
+            name: user.name,
+            user_id: user.user_id,
             creation_date: user.creation_date,
-            image_url: user.image_url.clone(),
-            gender: user.gender.clone(),
-        })
+            image_url: user.image_url,
+            gender: user.gender,
+        };
+        Ok(value)
     }
 }
 
@@ -39,22 +42,13 @@ pub struct NewUser {
     pub gender: Option<String>,
 }
 
-impl NewUser {
-    pub fn into_model(self) -> model::NewUser {
+impl From<NewUser> for model::NewUser {
+    fn from(new_user: NewUser) -> Self {
         model::NewUser {
-            name: self.name,
-            user_id: self.user_id,
-            image_url: self.image_url,
-            gender: self.gender,
-        }
-    }
-
-    pub fn to_model(&self) -> model::NewUser {
-        model::NewUser {
-            name: self.name.clone(),
-            user_id: self.user_id.clone(),
-            image_url: self.image_url.clone(),
-            gender: self.gender.clone(),
+            name: new_user.name,
+            user_id: new_user.user_id,
+            image_url: new_user.image_url,
+            gender: new_user.gender,
         }
     }
 }
