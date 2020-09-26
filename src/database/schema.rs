@@ -1,9 +1,10 @@
 table! {
-    access_token (id, user) {
+    access_token (id, user_id) {
         id -> Binary,
         token -> Char,
         issue_date -> Datetime,
-        user -> Binary,
+        #[sql_name = "user"]
+        user_id -> Binary,
     }
 }
 
@@ -40,10 +41,11 @@ table! {
 }
 
 table! {
-    email (id, user) {
+    email (id, user_id) {
         id -> Binary,
         address -> Varchar,
-        user -> Binary,
+        #[sql_name = "user"]
+        user_id -> Binary,
         registration_date -> Nullable<Datetime>,
         is_validated -> Tinyint,
     }
@@ -99,11 +101,12 @@ table! {
 }
 
 table! {
-    phone_number (id, user) {
+    phone_number (id, user_id) {
         id -> Binary,
         itu_code -> Integer,
         domestic_number -> Varchar,
-        user -> Binary,
+        #[sql_name = "user"]
+        user_id -> Binary,
         is_validated -> Tinyint,
     }
 }
@@ -145,9 +148,11 @@ table! {
 }
 
 table! {
-    user_has_group (user, group) {
-        user -> Binary,
-        group -> Binary,
+    user_has_group (user_id, group_id) {
+        #[sql_name = "user"]
+        user_id -> Binary,
+        #[sql_name = "group"]
+        group_id -> Binary,
     }
 }
 
@@ -166,21 +171,21 @@ table! {
     }
 }
 
-joinable!(access_token -> user (user));
+joinable!(access_token -> user (user_id));
 joinable!(auth_info -> user (user_id));
 joinable!(client -> user (owner));
 joinable!(client_permission_requirement -> permission_group (permission_group));
-joinable!(email -> user (user));
+joinable!(email -> user (user_id));
 joinable!(group_has_permission_group -> group (group));
 joinable!(group_has_permission_group -> permission_group (permission_group));
 joinable!(log -> user (initiator_user));
 joinable!(permission_group_has_permission -> permission (permission));
 joinable!(permission_group_has_permission -> permission_group (permission_group));
-joinable!(phone_number -> user (user));
+joinable!(phone_number -> user (user_id));
 joinable!(refresh_token -> user (user));
 joinable!(user_accepted_client -> user (user_id));
-joinable!(user_has_group -> group (group));
-joinable!(user_has_group -> user (user));
+joinable!(user_has_group -> group (group_id));
+joinable!(user_has_group -> user (user_id));
 joinable!(user_has_permission_group -> permission_group (permission_group_id));
 joinable!(user_has_permission_group -> user (user_id));
 joinable!(user_policy_consent -> policy (policy_id));
