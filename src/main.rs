@@ -47,13 +47,8 @@ async fn graphql(
 }
 
 #[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello, World!")
-}
-
-#[get("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
+async fn root() -> impl Responder {
+    HttpResponse::Ok().body("Hey, This is meiling API Server! We don't have front-end yet")
 }
 
 embed_migrations!();
@@ -93,8 +88,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .data(schema.clone())
             .data(context.clone())
-            .service(hello)
-            .service(echo)
+            .service(root)
             .service(playground)
             .service(graphql)
     })
