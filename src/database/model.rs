@@ -199,15 +199,17 @@ pub struct NewRefreshToken {
 pub struct User {
     pub id: Vec<u8>,
     pub name: String,
+    pub user_id: String,
     pub creation_date: NaiveDateTime,
     pub image_url: Option<String>,
     pub gender: Option<String>,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Debug)]
 #[table_name = "user"]
 pub struct NewUser {
     pub name: String,
+    pub user_id: String,
     pub image_url: Option<String>,
     pub gender: Option<String>,
 }

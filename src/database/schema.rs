@@ -133,6 +133,7 @@ table! {
 table! {
     user (id) {
         id -> Binary,
+        user_id -> Varchar,
         name -> Varchar,
         creation_date -> Datetime,
         image_url -> Nullable<Text>,
