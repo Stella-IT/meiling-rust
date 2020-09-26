@@ -16,11 +16,12 @@ USE `meiling`;
 
 CREATE TABLE `meiling`.`user`
 (
-    `id`            BINARY(16)  NOT NULL DEFAULT UUID(),
-    `name`          VARCHAR(45) NOT NULL,
-    `creation_date` DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `image_url`     TEXT        NULL,
-    `gender`        VARCHAR(12) NULL,
+    `id`            VARBINARY(36) NOT NULL DEFAULT UUID(),
+    `user_id`       VARCHAR(128)  NOT NULL UNIQUE,
+    `name`          VARCHAR(128)  NOT NULL,
+    `creation_date` DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `image_url`     TEXT          NULL,
+    `gender`        VARCHAR(64)   NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE
 )
@@ -32,8 +33,8 @@ CREATE TABLE `meiling`.`user`
 
 CREATE TABLE `meiling`.`group`
 (
-    `id`   BINARY(16)  NOT NULL DEFAULT UUID(),
-    `name` VARCHAR(32) NOT NULL,
+    `id`   VARBINARY(36) NOT NULL DEFAULT UUID(),
+    `name` VARCHAR(32)   NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
     UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE
@@ -46,8 +47,8 @@ CREATE TABLE `meiling`.`group`
 
 CREATE TABLE `meiling`.`user_has_group`
 (
-    `user`  BINARY(16) NOT NULL,
-    `group` BINARY(16) NOT NULL,
+    `user`  VARBINARY(36) NOT NULL,
+    `group` VARBINARY(36) NOT NULL,
     PRIMARY KEY (`user`, `group`),
     INDEX `fk_user_has_group_group1_idx` (`group` ASC) VISIBLE,
     INDEX `fk_user_has_group_user1_idx` (`user` ASC) VISIBLE,
@@ -70,11 +71,11 @@ CREATE TABLE `meiling`.`user_has_group`
 
 CREATE TABLE `meiling`.`email`
 (
-    `id`                BINARY(16)  NOT NULL DEFAULT UUID(),
-    address             VARCHAR(64) NOT NULL,
-    `user`              BINARY(16)  NOT NULL,
+    `id`                VARBINARY(36) NOT NULL DEFAULT UUID(),
+    address             VARCHAR(64)   NOT NULL,
+    `user`              VARBINARY(36) NOT NULL,
     `registration_date` DATETIME GENERATED ALWAYS AS (CURRENT_TIMESTAMP) VIRTUAL,
-    `is_validated`      TINYINT     NOT NULL DEFAULT 0,
+    `is_validated`      TINYINT       NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`, `user`),
     UNIQUE INDEX `email_UNIQUE` (address ASC) VISIBLE,
     INDEX `fk_email_user1_idx` (`user` ASC) VISIBLE,
@@ -93,11 +94,11 @@ CREATE TABLE `meiling`.`email`
 
 CREATE TABLE `meiling`.`phone_number`
 (
-    `id`              BINARY(16)  NOT NULL DEFAULT UUID(),
-    `itu_code`        INT         NOT NULL,
-    `domestic_number` VARCHAR(16) NOT NULL,
-    `user`            BINARY(16)  NOT NULL,
-    `is_validated`    TINYINT     NOT NULL DEFAULT 0,
+    `id`              VARBINARY(36) NOT NULL DEFAULT UUID(),
+    `itu_code`        INT           NOT NULL,
+    `domestic_number` VARCHAR(16)   NOT NULL,
+    `user`            VARBINARY(36) NOT NULL,
+    `is_validated`    TINYINT       NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`, `user`),
     INDEX `fk_phone_number_user1_idx` (`user` ASC) VISIBLE,
     CONSTRAINT `fk_phone_number_user1`
@@ -114,8 +115,8 @@ CREATE TABLE `meiling`.`phone_number`
 
 CREATE TABLE `meiling`.`permission`
 (
-    `id`   BINARY(16)  NOT NULL DEFAULT UUID(),
-    `name` VARCHAR(45) NOT NULL,
+    `id`   VARBINARY(36) NOT NULL DEFAULT UUID(),
+    `name` VARCHAR(45)   NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE
 )
@@ -127,8 +128,8 @@ CREATE TABLE `meiling`.`permission`
 
 CREATE TABLE `meiling`.`permission_group`
 (
-    `id`   BINARY(16)  NOT NULL DEFAULT UUID(),
-    `name` VARCHAR(45) NOT NULL,
+    `id`   VARBINARY(36) NOT NULL DEFAULT UUID(),
+    `name` VARCHAR(45)   NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE
 )
@@ -140,8 +141,8 @@ CREATE TABLE `meiling`.`permission_group`
 
 CREATE TABLE `meiling`.`permission_group_has_permission`
 (
-    `permission`       BINARY(16) NOT NULL,
-    `permission_group` BINARY(16) NOT NULL,
+    `permission`       VARBINARY(36) NOT NULL,
+    `permission_group` VARBINARY(36) NOT NULL,
     PRIMARY KEY (`permission`, `permission_group`),
     INDEX `fk_permission_has_permission_group_permission_group1_idx` (`permission_group` ASC) VISIBLE,
     INDEX `fk_permission_has_permission_group_permission1_idx` (`permission` ASC) VISIBLE,
@@ -164,8 +165,8 @@ CREATE TABLE `meiling`.`permission_group_has_permission`
 
 CREATE TABLE `meiling`.`group_has_permission_group`
 (
-    `permission_group` BINARY(16) NOT NULL,
-    `group`            BINARY(16) NOT NULL,
+    `permission_group` VARBINARY(36) NOT NULL,
+    `group`            VARBINARY(36) NOT NULL,
     PRIMARY KEY (`permission_group`, `group`),
     INDEX `fk_permission_group_has_group_group1_idx` (`group` ASC) VISIBLE,
     INDEX `fk_permission_group_has_group_permission_group1_idx` (`permission_group` ASC) VISIBLE,
@@ -188,8 +189,8 @@ CREATE TABLE `meiling`.`group_has_permission_group`
 
 CREATE TABLE `meiling`.`user_has_permission_group`
 (
-    `permission_group_id` BINARY(16) NOT NULL,
-    `user_id`             BINARY(16) NOT NULL,
+    `permission_group_id` VARBINARY(36) NOT NULL,
+    `user_id`             VARBINARY(36) NOT NULL,
     PRIMARY KEY (`permission_group_id`, `user_id`),
     INDEX `fk_permission_group_has_user_user1_idx` (`user_id` ASC) VISIBLE,
     INDEX `fk_permission_group_has_user_permission_group1_idx` (`permission_group_id` ASC) VISIBLE,
@@ -212,14 +213,14 @@ CREATE TABLE `meiling`.`user_has_permission_group`
 
 CREATE TABLE `meiling`.`client`
 (
-    `id`             BINARY(16)   NOT NULL DEFAULT UUID(),
-    `name`           VARCHAR(45)  NOT NULL,
-    `secret`         VARCHAR(256) NOT NULL,
-    `author`         VARCHAR(32)  NULL,
-    `contact`        VARCHAR(64)  NULL,
-    `image_url`      TEXT         NULL,
-    `owner`          BINARY(16)   NOT NULL,
-    `privacy_policy` TEXT         NULL,
+    `id`             VARBINARY(36) NOT NULL DEFAULT UUID(),
+    `name`           VARCHAR(45)   NOT NULL,
+    `secret`         VARCHAR(256)  NOT NULL,
+    `author`         VARCHAR(32)   NULL,
+    `contact`        VARCHAR(64)   NULL,
+    `image_url`      TEXT          NULL,
+    `owner`          VARBINARY(36) NOT NULL,
+    `privacy_policy` TEXT          NULL,
     PRIMARY KEY (`id`, `owner`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
     INDEX `fk_client_user1_idx` (`owner` ASC) VISIBLE,
@@ -237,8 +238,8 @@ CREATE TABLE `meiling`.`client`
 
 CREATE TABLE `meiling`.`client_permission_requirement`
 (
-    `client`           BINARY(16) NOT NULL,
-    `permission_group` BINARY(16) NOT NULL,
+    `client`           VARBINARY(36) NOT NULL,
+    `permission_group` VARBINARY(36) NOT NULL,
     PRIMARY KEY (`client`, `permission_group`),
     INDEX `fk_client_has_permission_group_permission_group1_idx` (`permission_group` ASC) VISIBLE,
     INDEX `fk_client_has_permission_group_client1_idx` (`client` ASC) VISIBLE,
@@ -261,8 +262,8 @@ CREATE TABLE `meiling`.`client_permission_requirement`
 
 CREATE TABLE `meiling`.`user_accepted_client`
 (
-    `client_id` BINARY(16) NOT NULL,
-    `user_id`   BINARY(16) NOT NULL,
+    `client_id` VARBINARY(36) NOT NULL,
+    `user_id`   VARBINARY(36) NOT NULL,
     PRIMARY KEY (`client_id`, `user_id`),
     INDEX `fk_client_has_user_user1_idx` (`user_id` ASC) VISIBLE,
     INDEX `fk_client_has_user_client1_idx` (`client_id` ASC) VISIBLE,
@@ -285,10 +286,10 @@ CREATE TABLE `meiling`.`user_accepted_client`
 
 CREATE TABLE `meiling`.`refresh_token`
 (
-    `id`       BINARY(16) NOT NULL DEFAULT UUID(),
-    `token`    CHAR(128)  NOT NULL,
-    issue_date DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `user`     BINARY(16) NOT NULL,
+    `id`       VARBINARY(36) NOT NULL DEFAULT UUID(),
+    `token`    CHAR(128)     NOT NULL,
+    issue_date DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user`     VARBINARY(36) NOT NULL,
     PRIMARY KEY (`id`, `user`),
     UNIQUE INDEX `token_UNIQUE` (`token` ASC) VISIBLE,
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
@@ -307,10 +308,10 @@ CREATE TABLE `meiling`.`refresh_token`
 
 CREATE TABLE `meiling`.`access_token`
 (
-    `id`       BINARY(16) NOT NULL DEFAULT UUID(),
-    `token`    CHAR(128)  NOT NULL,
-    issue_date DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `user`     BINARY(16) NOT NULL,
+    `id`       VARBINARY(36) NOT NULL DEFAULT UUID(),
+    `token`    CHAR(128)     NOT NULL,
+    issue_date DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user`     VARBINARY(36) NOT NULL,
     PRIMARY KEY (`id`, `user`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
     UNIQUE INDEX `token_UNIQUE` (`token` ASC) VISIBLE,
@@ -329,12 +330,12 @@ CREATE TABLE `meiling`.`access_token`
 
 CREATE TABLE `meiling`.`log`
 (
-    `id`               BINARY(16)                                                        NOT NULL DEFAULT UUID(),
+    `id`               VARBINARY(36)                                                     NOT NULL DEFAULT UUID(),
     `initiator_ip`     VARCHAR(40)                                                       NOT NULL DEFAULT '0.0.0.0',
     data               TEXT                                                              NOT NULL,
     `type`             ENUM ('job_start', 'job_log', 'job_end', 'user_log', 'audit_log') NOT NULL,
-    `initiator_user`   BINARY(16)                                                        NULL,
-    `initiator_client` BINARY(16)                                                        NULL,
+    `initiator_user`   VARBINARY(36)                                                     NULL,
+    `initiator_client` VARBINARY(36)                                                     NULL,
     PRIMARY KEY (`id`, `initiator_user`, `initiator_client`),
     INDEX `fk_log_user1_idx` (`initiator_user` ASC) VISIBLE,
     INDEX `fk_log_client1_idx` (`initiator_client` ASC) VISIBLE,
@@ -357,11 +358,11 @@ CREATE TABLE `meiling`.`log`
 
 CREATE TABLE `meiling`.`auth_info`
 (
-    `id`          BINARY(16)                                       NOT NULL DEFAULT UUID(),
+    `id`          VARBINARY(36)                                    NOT NULL DEFAULT UUID(),
     `auth_method` ENUM ('Password', 'pubkey', 'one_time_password') NOT NULL,
     `key`         TEXT                                             NOT NULL,
     `name`        VARCHAR(16)                                      NOT NULL,
-    `user_id`     BINARY(16)                                       NOT NULL,
+    `user_id`     VARBINARY(36)                                    NOT NULL,
     PRIMARY KEY (`id`, `user_id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
     INDEX `fk_auth_info_user1_idx` (`user_id` ASC) VISIBLE,
@@ -379,11 +380,11 @@ CREATE TABLE `meiling`.`auth_info`
 
 CREATE TABLE `meiling`.`policy`
 (
-    `id`          BINARY(16)  NOT NULL DEFAULT UUID(),
-    `name`        VARCHAR(64) NOT NULL,
-    `description` TEXT        NULL,
-    `url`         TEXT        NULL,
-    `required`    TINYINT     NOT NULL DEFAULT 0,
+    `id`          VARBINARY(36) NOT NULL DEFAULT UUID(),
+    `name`        VARCHAR(64)   NOT NULL,
+    `description` TEXT          NULL,
+    `url`         TEXT          NULL,
+    `required`    TINYINT       NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE
 )
@@ -395,9 +396,9 @@ CREATE TABLE `meiling`.`policy`
 
 CREATE TABLE `meiling`.`user_policy_consent`
 (
-    `policy_id` BINARY(16) NOT NULL,
-    `user_id`   BINARY(16) NOT NULL,
-    `consent`   TINYINT    NOT NULL DEFAULT 0,
+    `policy_id` VARBINARY(36) NOT NULL,
+    `user_id`   VARBINARY(36) NOT NULL,
+    `consent`   TINYINT       NOT NULL DEFAULT 0,
     PRIMARY KEY (`policy_id`, `user_id`),
     INDEX `fk_user_policy_consent_user1_idx` (`user_id` ASC) VISIBLE,
     CONSTRAINT `fk_user_policy_consent_policy1`
