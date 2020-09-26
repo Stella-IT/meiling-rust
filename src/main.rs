@@ -6,21 +6,22 @@ extern crate diesel_migrations;
 use std::io::{Error as StdError, ErrorKind as StdErrorKind};
 use std::sync::Arc;
 
-use actix_web::{get, post, web, App, Error, HttpResponse, HttpServer, Responder};
-use juniper::http::{playground::playground_source, GraphQLRequest};
+use actix_web::{App, Error, get, HttpResponse, HttpServer, post, Responder, web};
+use juniper::http::{GraphQLRequest, playground::playground_source};
 
 use crate::config::{Config, ConfigError};
-use crate::database::connection::build_pool;
 use crate::database::{
     connection::{establish_diesel_connection, establish_r2d2_connection},
     error::DatabaseError,
 };
+use crate::database::connection::build_pool;
 use crate::gql::context::Context;
 use crate::gql::schema::{create_schema, Schema};
 
 mod config;
 mod database;
 mod gql;
+mod oauth2;
 
 #[get("/graphql")]
 async fn playground() -> HttpResponse {
@@ -91,6 +92,11 @@ async fn main() -> std::io::Result<()> {
             .service(root)
             .service(playground)
             .service(graphql)
+            .service(
+                web::scope("oauth2")
+                    .service(oauth2::auth_redirect)
+                    .service(oauth2::get_token)
+            )
     })
     .bind(config.bind_address)?
     .run()
