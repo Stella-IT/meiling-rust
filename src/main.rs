@@ -21,6 +21,7 @@ use crate::gql::schema::{create_schema, Schema};
 mod config;
 mod database;
 mod gql;
+mod meiling;
 
 #[get("/graphql")]
 async fn playground() -> HttpResponse {
