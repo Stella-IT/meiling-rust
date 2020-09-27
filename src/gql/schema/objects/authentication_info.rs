@@ -5,8 +5,8 @@ use std::str::FromStr;
 use juniper::{GraphQLInputObject, GraphQLObject};
 use uuid::Uuid;
 
-use crate::database::{enums, model};
 use crate::gql::schema::enums::AuthenticationMethod;
+use crate::meiling::{enums as meiling_enums, objects::authentication_info as meiling};
 
 #[derive(GraphQLObject)]
 pub struct AuthenticationInfo {
@@ -17,24 +17,21 @@ pub struct AuthenticationInfo {
     pub user_id: String,
 }
 
-impl TryFrom<model::AuthenticationInfo> for AuthenticationInfo {
-    type Error = Box<dyn Error>;
-
-    fn try_from(authentication_info: model::AuthenticationInfo) -> Result<Self, Self::Error> {
-        Ok(Self {
-            uuid: Uuid::from_str(&String::from_utf8(authentication_info.id.clone())?)?.to_string(),
+impl From<meiling::AuthenticationInfo> for AuthenticationInfo {
+    fn from(authentication_info: meiling::AuthenticationInfo) -> Self {
+        Self {
+            uuid: authentication_info.uuid.to_string(),
             auth_method: match authentication_info.auth_method {
-                enums::AuthenticationMethod::Password => AuthenticationMethod::Password,
-                enums::AuthenticationMethod::Pubkey => AuthenticationMethod::Pubkey,
-                enums::AuthenticationMethod::OneTimePassword => {
+                meiling_enums::AuthenticationMethod::Password => AuthenticationMethod::Password,
+                meiling_enums::AuthenticationMethod::Pubkey => AuthenticationMethod::Pubkey,
+                meiling_enums::AuthenticationMethod::OneTimePassword => {
                     AuthenticationMethod::OneTimePassword
                 }
             },
             key: authentication_info.key,
             name: authentication_info.name,
-            user_id: Uuid::from_str(&String::from_utf8(authentication_info.user_id.clone())?)?
-                .to_string(),
-        })
+            user_id: authentication_info.user_id.to_string(),
+        }
     }
 }
 
@@ -46,19 +43,20 @@ pub struct NewAuthenticationInfo {
     pub user_id: String,
 }
 
-impl From<NewAuthenticationInfo> for model::NewAuthenticationInfo {
-    fn from(new_authentication_info: NewAuthenticationInfo) -> Self {
-        Self {
+impl TryFrom<NewAuthenticationInfo> for meiling::NewAuthenticationInfo {
+    type Error = Box<dyn Error>;
+    fn try_from(new_authentication_info: NewAuthenticationInfo) -> Result<Self, Self::Error> {
+        Ok(Self {
             auth_method: match new_authentication_info.auth_method {
-                AuthenticationMethod::Password => enums::AuthenticationMethod::Password,
-                AuthenticationMethod::Pubkey => enums::AuthenticationMethod::Pubkey,
+                AuthenticationMethod::Password => meiling_enums::AuthenticationMethod::Password,
+                AuthenticationMethod::Pubkey => meiling_enums::AuthenticationMethod::Pubkey,
                 AuthenticationMethod::OneTimePassword => {
-                    enums::AuthenticationMethod::OneTimePassword
+                    meiling_enums::AuthenticationMethod::OneTimePassword
                 }
             },
             key: new_authentication_info.key,
             name: new_authentication_info.name,
-            user_id: new_authentication_info.user_id.into_bytes(),
-        }
+            user_id: Uuid::from_str(&new_authentication_info.user_id.as_str())?,
+        })
     }
 }

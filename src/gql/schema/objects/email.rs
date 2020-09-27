@@ -6,7 +6,7 @@ use chrono::NaiveDateTime;
 use juniper::{GraphQLInputObject, GraphQLObject};
 use uuid::Uuid;
 
-use crate::database::model;
+use crate::meiling::objects::email as meiling;
 
 #[derive(GraphQLObject)]
 pub struct Email {
@@ -17,20 +17,15 @@ pub struct Email {
     pub is_validated: bool,
 }
 
-impl TryFrom<model::Email> for Email {
-    type Error = Box<dyn Error>;
-
-    fn try_from(email: model::Email) -> Result<Self, Self::Error> {
-        Ok(Self {
-            id: Uuid::from_str(&String::from_utf8(email.id)?)?.to_string(),
+impl From<meiling::Email> for Email {
+    fn from(email: meiling::Email) -> Self {
+        Self {
+            id: email.id.to_string(),
             address: email.address,
-            user_id: Uuid::from_str(&String::from_utf8(email.user_id)?)?.to_string(),
+            user_id: email.user_id.to_string(),
             registration_date: email.registration_date,
-            is_validated: match email.is_validated {
-                0 => false,
-                _ => true,
-            },
-        })
+            is_validated: email.is_validated,
+        }
     }
 }
 
@@ -42,16 +37,15 @@ pub struct NewEmail {
     pub is_validated: bool,
 }
 
-impl From<NewEmail> for model::NewEmail {
-    fn from(email: NewEmail) -> Self {
-        Self {
+impl TryFrom<NewEmail> for meiling::NewEmail {
+    type Error = Box<dyn Error>;
+
+    fn try_from(email: NewEmail) -> Result<Self, Self::Error> {
+        Ok(Self {
             address: email.address,
-            user_id: email.user_id.into_bytes(),
+            user_id: Uuid::from_str(&email.user_id.as_str())?,
             registration_date: email.registration_date,
-            is_validated: match email.is_validated {
-                true => 1,
-                false => 0,
-            },
-        }
+            is_validated: email.is_validated,
+        })
     }
 }
