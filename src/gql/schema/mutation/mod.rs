@@ -1,6 +1,5 @@
 use juniper::FieldResult;
 
-use crate::gql::schema::objects::NewAuthenticationInfo;
 use crate::meiling;
 
 use super::super::{context::Context, schema::objects};
@@ -16,12 +15,20 @@ impl MutationRoot {
 
     fn add_authentication_method(
         context: &Context,
-        new_authentication_info: NewAuthenticationInfo,
+        new_authentication_info: objects::NewAuthenticationInfo,
     ) -> FieldResult<Vec<objects::AuthenticationInfo>> {
         let conn = context.database_pool.get()?;
         Ok(meiling::add_authentication_method(
             &conn,
             new_authentication_info,
         )?)
+    }
+
+    fn add_email(
+        context: &Context,
+        new_email: objects::NewEmail,
+    ) -> FieldResult<Vec<objects::Email>> {
+        let conn = context.database_pool.get()?;
+        Ok(meiling::add_email(&conn, new_email)?)
     }
 }
