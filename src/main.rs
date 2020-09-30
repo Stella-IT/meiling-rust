@@ -22,6 +22,7 @@ mod config;
 mod database;
 mod gql;
 mod meiling;
+mod oauth2;
 
 #[get("/graphql")]
 async fn playground() -> HttpResponse {
