@@ -359,7 +359,7 @@ CREATE TABLE `meiling`.`log`
 CREATE TABLE `meiling`.`auth_info`
 (
     `id`          VARBINARY(36)                                    NOT NULL DEFAULT UUID(),
-    `auth_method` ENUM ('Password', 'pubkey', 'one_time_password') NOT NULL,
+    `auth_method` ENUM ('password', 'pubkey', 'one_time_password') NOT NULL,
     `key`         TEXT                                             NOT NULL,
     `name`        VARCHAR(16)                                      NOT NULL,
     `user_id`     VARBINARY(36)                                    NOT NULL,

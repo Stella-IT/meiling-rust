@@ -1,5 +1,5 @@
-use crate::database::connection::MysqlPooledConnectionManager;
 use crate::config::Config;
+use crate::database::connection::MysqlPooledConnectionManager;
 
 impl juniper::Context for Context {}
 

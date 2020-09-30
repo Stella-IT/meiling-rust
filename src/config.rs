@@ -34,9 +34,7 @@ impl Database {
     fn from_env() -> Result<Self, ConfigError> {
         let url = try_get_var!("DATABASE_URL");
 
-        Ok(Self {
-            url,
-        })
+        Ok(Self { url })
     }
 }
 
@@ -52,13 +50,9 @@ impl Config {
 
         let database = Database::from_env()?;
 
-        let port = var("PORT").unwrap_or_else(|_| {
-            String::from("80")
-        });
+        let port = var("PORT").unwrap_or_else(|_| String::from("80"));
 
-        let bind_address = var("BIND_ADDRESS").unwrap_or_else(|_| {
-            format!("0.0.0.0:{}", port)
-        });
+        let bind_address = var("BIND_ADDRESS").unwrap_or_else(|_| format!("0.0.0.0:{}", port));
 
         Ok(Self {
             database,

@@ -12,3 +12,7 @@ pub async fn auth_redirect(req: HttpRequest) -> impl Responder {
 pub async fn get_token() -> impl Responder {
     HttpResponse::Ok().body("")
 }
+
+async fn is_client_valid(client_id: String, client_secret: String) {
+
+}

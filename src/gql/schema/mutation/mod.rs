@@ -2,27 +2,46 @@ use std::convert::TryFrom;
 
 use juniper::FieldResult;
 
-use crate::database::model;
+use crate::meiling;
 
-use super::super::{context::Context, schema::objects};
+use super::super::{context::Context, schema::objects::*};
 
 pub struct MutationRoot;
 
 #[juniper::object(Context = Context)]
 impl MutationRoot {
-    fn create_user(context: &Context, new_user: objects::NewUser) -> FieldResult<objects::User> {
+    fn create_user(context: &Context, new_user: user::NewUser) -> FieldResult<user::User> {
         let conn = context.database_pool.get()?;
-        let inserted_user: model::User = {
-            use crate::database::schema::user::dsl::*;
-            use diesel::prelude::*;
+        Ok(user::User::from(meiling::user::create_user(
+            &conn,
+            new_user.into(),
+        )?))
+    }
 
-            let new_user_id = new_user.user_id.clone();
+    fn add_authentication_method(
+        context: &Context,
+        new_authentication_info: authentication_info::NewAuthenticationInfo,
+    ) -> FieldResult<Vec<authentication_info::AuthenticationInfo>> {
+        let conn = context.database_pool.get()?;
+        Ok(meiling::user::add_authentication_method(
+            &conn,
+            meiling::objects::authentication_info::NewAuthenticationInfo::try_from(
+                new_authentication_info,
+            )?,
+        )?
+        .into_iter()
+        .map(|e| authentication_info::AuthenticationInfo::from(e))
+        .collect())
+    }
 
-            diesel::insert_into(user)
-                .values(model::NewUser::from(new_user))
-                .execute(&conn)?;
-            user.filter(user_id.eq(new_user_id)).get_result(&conn)
-        }?;
-        Ok(objects::User::try_from(inserted_user)?)
+    fn add_email(context: &Context, new_email: email::NewEmail) -> FieldResult<Vec<email::Email>> {
+        let conn = context.database_pool.get()?;
+        Ok(meiling::user::add_email(
+            &conn,
+            meiling::objects::email::NewEmail::try_from(email::NewEmail::try_from(new_email)?)?,
+        )?
+        .into_iter()
+        .map(|e| e.into())
+        .collect())
     }
 }

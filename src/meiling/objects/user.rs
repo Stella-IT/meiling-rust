@@ -3,14 +3,12 @@ use std::error::Error;
 use std::str::FromStr;
 
 use chrono::NaiveDateTime;
-use juniper::{GraphQLInputObject, GraphQLObject};
 use uuid::Uuid;
 
 use crate::database::model;
 
-#[derive(GraphQLObject)]
 pub struct User {
-    pub uuid: String,
+    pub uuid: Uuid,
     pub name: String,
     pub user_id: String,
     pub creation_date: NaiveDateTime,
@@ -23,7 +21,7 @@ impl TryFrom<model::User> for User {
 
     fn try_from(user: model::User) -> Result<Self, Self::Error> {
         let value = Self {
-            uuid: Uuid::from_str(&String::from_utf8(user.id.clone())?)?.to_string(),
+            uuid: Uuid::from_str(&String::from_utf8(user.id.clone())?)?,
             name: user.name,
             user_id: user.user_id,
             creation_date: user.creation_date,
@@ -34,7 +32,6 @@ impl TryFrom<model::User> for User {
     }
 }
 
-#[derive(GraphQLInputObject)]
 pub struct NewUser {
     pub name: String,
     pub user_id: String,
