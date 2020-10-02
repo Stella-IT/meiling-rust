@@ -1,38 +1,50 @@
-use actix_web::{get, HttpRequest, HttpResponse, post, Responder, web};
 use std::sync::Arc;
-use crate::gql::schema::Schema;
-use crate::gql::context::Context;
+
+use actix_web::{get, web, HttpRequest, HttpResponse, Responder};
 use qstring::QString;
+
 use crate::database::model::Client;
-use std::error::Error;
+use crate::gql::context::Context;
+use crate::oauth2::error::OAuth2Error;
+
+pub mod error;
 
 #[get("/auth")]
 pub async fn auth_redirect(req: HttpRequest) -> impl Responder {
     const ACCOUNT_SERVER: &str = "https://accounts.stella-it.com/auth";
     let query_string: String = req.query_string().to_string();
 
-    HttpResponse::TemporaryRedirect().header("Location", format!("{}?{}", ACCOUNT_SERVER, query_string)).body("")
+    HttpResponse::TemporaryRedirect()
+        .header("Location", format!("{}?{}", ACCOUNT_SERVER, query_string))
+        .body("")
 }
 
 #[get("/token")]
 async fn get_token(
-    st: web::Data<Arc<Schema>>,
     context: web::Data<Arc<Context>>,
     req: HttpRequest,
-) -> Result<HttpResponse, Box<dyn Error>> {
-    use crate::database::schema::client::dsl::*;
-    use diesel::prelude::*;
-
-    let conn = context.database_pool.get()?;
+) -> Result<HttpResponse, OAuth2Error> {
+    let conn = context
+        .database_pool
+        .get()
+        .map_err(|_| OAuth2Error::Unknown)?;
 
     let query_string = req.query_string();
     let queries = QString::from(query_string);
 
-    let da_client = {
-        let client_id = queries.get("client_id");
+    let da_client: Client = {
+        use crate::database::schema::client::dsl::*;
+        use diesel::prelude::*;
 
-        client.filter(id.eq(client_id.into())).get_result(&conn)?
+        let client_id = queries
+            .get("client_id")
+            .ok_or(error::OAuth2Error::ClientIdIsNone)?;
+
+        client
+            .filter(id.eq(client_id.as_bytes().to_vec()))
+            .get_result(&conn)
+            .map_err(|_| OAuth2Error::Unknown)?
     };
 
-    Ok(HttpResponse::Ok().body(da_client.id.into()))
+    Ok(HttpResponse::Ok().body(String::from_utf8(da_client.id).map_err(|_| OAuth2Error::Unknown)?))
 }
