@@ -3,9 +3,8 @@ use std::sync::Arc;
 use actix_web::{get, web, HttpRequest, HttpResponse, Responder};
 use qstring::QString;
 
-use crate::database::model::Client;
 use crate::gql::context::Context;
-use crate::oauth2::error::OAuth2Error;
+use crate::meiling::{oauth2, objects::oauth2 as oauth2_objects};
 
 pub mod error;
 
@@ -23,32 +22,33 @@ pub async fn auth_redirect(req: HttpRequest) -> impl Responder {
 async fn get_token(
     context: web::Data<Arc<Context>>,
     req: HttpRequest,
-) -> Result<HttpResponse, OAuth2Error> {
-    let conn = context
-        .database_pool
-        .get()
-        .map_err(|_| OAuth2Error::Unknown)?;
-
+) -> Result<HttpResponse, error::OAuth2Error> {
     let query_string = req.query_string();
     let queries = QString::from(query_string);
 
     let client_id = queries
         .get("client_id")
-        .ok_or(error::OAuth2Error::ClientIdIsNone)?;
+        .ok_or(error::OAuth2Error::ClientIdIsNone)?
+        .to_string();
     let client_secret = queries
         .get("client_secret")
-        .ok_or(error::OAuth2Error::ClientSecretIsNone)?;
+        .ok_or(error::OAuth2Error::ClientSecretIsNone)?
+        .to_string();
 
-    let da_client: Client = {
-        use crate::database::schema::client::dsl::*;
-        use diesel::prelude::*;
+    let conn = context
+        .database_pool
+        .get()
+        .map_err(|_| error::OAuth2Error::Unknown)?;
 
-        client
-            .filter(id.eq(client_id.as_bytes().to_vec()))
-            .filter(secret.eq(client_secret.to_string()))
-            .get_result(&conn)
-            .map_err(|_| OAuth2Error::Unknown)?
-    };
+    let token = oauth2::get_token(
+        &conn,
+        oauth2_objects::NewTokenRequest {
+            client_id,
+            client_secret,
+        },
+    )
+    .map_err(|e| error::OAuth2Error::from(e))?;
 
-    Ok(HttpResponse::Ok().body(String::from_utf8(da_client.id).map_err(|_| OAuth2Error::Unknown)?))
+    Ok(HttpResponse::Ok()
+        .body(serde_json::to_string(&token).map_err(|e| error::OAuth2Error::Unknown)?))
 }

@@ -3,14 +3,27 @@ use actix_web::http::{header, StatusCode};
 use actix_web::{error, HttpResponse};
 use derive_more::{Display, Error};
 
+use crate::meiling::objects::oauth2::OAuth2Error as MeilingOAuth2Error;
+
 #[derive(Debug, Display, Error)]
 pub enum OAuth2Error {
     #[display(fmt = "Client ID Not Found")]
     ClientIdIsNone,
     #[display(fmt = "Client Secret Not Found")]
     ClientSecretIsNone,
+    #[display(fmt = "Client not found or secret is wrong")]
+    ClientIsNone,
     #[display(fmt = "Unknown Error")]
     Unknown,
+}
+
+impl From<MeilingOAuth2Error> for OAuth2Error {
+    fn from(e: MeilingOAuth2Error) -> Self {
+        match e {
+            MeilingOAuth2Error::ClientIsNone => OAuth2Error::ClientIsNone,
+            _ => OAuth2Error::Unknown,
+        }
+    }
 }
 
 impl error::ResponseError for OAuth2Error {
