@@ -32,16 +32,20 @@ async fn get_token(
     let query_string = req.query_string();
     let queries = QString::from(query_string);
 
+    let client_id = queries
+        .get("client_id")
+        .ok_or(error::OAuth2Error::ClientIdIsNone)?;
+    let client_secret = queries
+        .get("client_secret")
+        .ok_or(error::OAuth2Error::ClientSecretIsNone)?;
+
     let da_client: Client = {
         use crate::database::schema::client::dsl::*;
         use diesel::prelude::*;
 
-        let client_id = queries
-            .get("client_id")
-            .ok_or(error::OAuth2Error::ClientIdIsNone)?;
-
         client
             .filter(id.eq(client_id.as_bytes().to_vec()))
+            .filter(secret.eq(client_secret.to_string()))
             .get_result(&conn)
             .map_err(|_| OAuth2Error::Unknown)?
     };
