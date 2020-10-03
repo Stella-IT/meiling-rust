@@ -26,20 +26,28 @@ async fn get_token(
     let query_string = req.query_string();
     let queries = QString::from(query_string);
 
+    // validate queries
     let client_id = queries
         .get("client_id")
-        .ok_or(error::OAuth2Error::ClientIdIsNone)?
+        .ok_or(error::OAuth2Error::InvalidRequest)?
         .to_string();
     let client_secret = queries
         .get("client_secret")
-        .ok_or(error::OAuth2Error::ClientSecretIsNone)?
+        .ok_or(error::OAuth2Error::InvalidRequest)?
         .to_string();
 
+    //
+    let grant_type: String = queries.get("grant_type")
+        .ok_or(error::OAuth2Error::GrantTypeIsNone)?
+        .to_string();
+
+    // create database connection pool
     let conn = context
         .database_pool
         .get()
         .map_err(|_| error::OAuth2Error::Unknown)?;
 
+    if
     let token = oauth2::get_token(
         &conn,
         oauth2_objects::NewTokenRequest {

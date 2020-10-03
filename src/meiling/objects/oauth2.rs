@@ -18,3 +18,11 @@ pub enum OAuth2Error {
     #[error("Unknown error")]
     Unknown,
 }
+
+pub enum OAuth2GrantType {
+    AuthorizationCode,
+    RefreshToken,
+    Password,
+    ClientCredentials,
+    ExtensionGrants(String),
+}
