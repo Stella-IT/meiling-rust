@@ -10,7 +10,7 @@ use crate::database::model;
 pub struct User {
     pub uuid: Uuid,
     pub name: String,
-    pub user_id: String,
+    pub user_id: Uuid,
     pub creation_date: NaiveDateTime,
     pub image_url: Option<String>,
     pub gender: Option<String>,
@@ -23,7 +23,7 @@ impl TryFrom<model::User> for User {
         let value = Self {
             uuid: Uuid::from_str(&String::from_utf8(user.id.clone())?)?,
             name: user.name,
-            user_id: user.user_id,
+            user_id: Uuid::from_str(&String::from_utf8(user.user_id.clone())?)?,
             creation_date: user.creation_date,
             image_url: user.image_url,
             gender: user.gender,
@@ -34,7 +34,7 @@ impl TryFrom<model::User> for User {
 
 pub struct NewUser {
     pub name: String,
-    pub user_id: String,
+    pub user_id: Uuid,
     pub image_url: Option<String>,
     pub gender: Option<String>,
 }
@@ -43,7 +43,7 @@ impl From<NewUser> for model::NewUser {
     fn from(new_user: NewUser) -> Self {
         model::NewUser {
             name: new_user.name,
-            user_id: new_user.user_id,
+            user_id: new_user.user_id.to_string().into_bytes(),
             image_url: new_user.image_url,
             gender: new_user.gender,
         }

@@ -22,7 +22,8 @@ pub fn create_user(
         diesel::insert_into(user)
             .values(model::NewUser::from(new_user))
             .execute(conn)?;
-        user.filter(user_id.eq(new_user_id)).get_result(conn)
+        user.filter(user_id.eq(new_user_id.to_string().into_bytes()))
+            .get_result(conn)
     }?;
     Ok(objects::user::User::try_from(inserted_user)?)
 }
@@ -36,7 +37,7 @@ fn get_user(
 
     let binary_user_id: Vec<u8> = uuid.to_string().into_bytes();
 
-    Ok(user.filter(id.eq(binary_user_id)).get_result(conn)?)
+    Ok(user.filter(user_id.eq(binary_user_id)).get_result(conn)?)
 }
 
 pub fn add_authentication_method(

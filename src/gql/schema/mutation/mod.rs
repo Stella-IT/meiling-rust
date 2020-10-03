@@ -1,4 +1,4 @@
-use std::convert::TryFrom;
+use std::convert::{TryFrom, TryInto};
 
 use juniper::FieldResult;
 
@@ -14,7 +14,7 @@ impl MutationRoot {
         let conn = context.database_pool.get()?;
         Ok(user::User::from(meiling::user::create_user(
             &conn,
-            new_user.into(),
+            new_user.try_into()?,
         )?))
     }
 
