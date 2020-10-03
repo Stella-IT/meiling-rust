@@ -9,7 +9,7 @@ table! {
 }
 
 table! {
-    use crate::database::database_enums::AuthenticationMethodMapping;
+    use crate::database::enums::AuthenticationMethodMapping;
     use diesel::sql_types::{Binary, Text, Varchar};
     auth_info (id, user_id) {
         id -> Binary,
@@ -70,7 +70,7 @@ table! {
 }
 
 table! {
-    use crate::database::database_enums::LogTypeMapping;
+    use crate::database::enums::LogTypeMapping;
     use diesel::sql_types::{Binary, Text, Varchar};
     log (id, initiator_user, initiator_client) {
         id -> Binary,

@@ -1,6 +1,6 @@
 use chrono::NaiveDateTime;
 
-use crate::database::database_enums::{AuthenticationMethod, LogType};
+use crate::database::enums::{AuthenticationMethod, LogType};
 
 use super::schema::*;
 
