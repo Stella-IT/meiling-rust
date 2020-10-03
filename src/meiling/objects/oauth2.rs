@@ -7,7 +7,9 @@ pub struct NewTokenRequest {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct NewTokenResponse {}
+pub struct NewTokenResponse {
+    pub token: String,
+}
 
 #[derive(Debug, Error)]
 pub enum OAuth2Error {

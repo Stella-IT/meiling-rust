@@ -4,7 +4,7 @@ use diesel::MysqlConnection;
 use crate::database::model;
 
 use super::objects;
-use crate::meiling::objects::oauth2::NewTokenResponse;
+use super::token::generate_random_token;
 
 pub fn get_token(
     conn: &PooledConnection<ConnectionManager<MysqlConnection>>,
@@ -21,5 +21,7 @@ pub fn get_token(
             .map_err(|_| objects::oauth2::OAuth2Error::Unknown)
     }?;
 
-    Ok(NewTokenResponse {})
+    Ok(objects::oauth2::NewTokenResponse {
+        token: generate_random_token(),
+    })
 }
