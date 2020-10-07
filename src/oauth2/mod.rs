@@ -37,8 +37,9 @@ async fn get_token(
         .to_string();
 
     //
-    let grant_type: String = queries.get("grant_type")
-        .ok_or(error::OAuth2Error::GrantTypeIsNone)?
+    let grant_type: String = queries
+        .get("grant_type")
+        .ok_or(error::OAuth2Error::InvalidRequest)?
         .to_string();
 
     // create database connection pool
@@ -47,7 +48,6 @@ async fn get_token(
         .get()
         .map_err(|_| error::OAuth2Error::Unknown)?;
 
-    if
     let token = oauth2::get_token(
         &conn,
         oauth2_objects::NewTokenRequest {

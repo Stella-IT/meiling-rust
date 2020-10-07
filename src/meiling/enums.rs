@@ -3,6 +3,7 @@ pub enum AuthenticationMethod {
     Password,
     Pubkey,
     OneTimePassword,
+    Fido2,
 }
 
 #[derive(Debug, Clone, PartialEq)]

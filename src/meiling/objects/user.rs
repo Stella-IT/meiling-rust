@@ -21,7 +21,7 @@ impl TryFrom<model::User> for User {
 
     fn try_from(user: model::User) -> Result<Self, Self::Error> {
         let value = Self {
-            uuid: Uuid::from_str(&String::from_utf8(user.id.clone())?)?,
+            uuid: Uuid::from_str(&String::from_utf8(user.id)?)?,
             name: user.name,
             user_id: user.user_id,
             creation_date: user.creation_date,

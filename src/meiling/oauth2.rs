@@ -15,7 +15,7 @@ pub fn get_token(
         use diesel::prelude::*;
 
         client
-            .filter(id.eq(new_token_request.client_id.as_bytes().to_vec()))
+            .filter(id.eq(new_token_request.client_id.into_bytes()))
             .filter(secret.eq(new_token_request.client_secret.to_string()))
             .get_result(conn)
             .map_err(|_| objects::oauth2::OAuth2Error::Unknown)

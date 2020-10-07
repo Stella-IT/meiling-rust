@@ -5,6 +5,7 @@ pub enum AuthenticationMethod {
     Password,
     Pubkey,
     OneTimePassword,
+    Fido2,
 }
 
 #[derive(DbEnum, Debug, Clone, PartialEq)]
@@ -14,4 +15,6 @@ pub enum LogType {
     JobEnd,
     UserLog,
     AuditLog,
+    DebugLog,
+    ClientLog,
 }

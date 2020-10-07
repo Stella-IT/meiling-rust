@@ -1,6 +1,6 @@
 use chrono::NaiveDateTime;
 
-use crate::database::database_enums::{AuthenticationMethod, LogType};
+use crate::database::enums::{AuthenticationMethod, LogType};
 
 use super::schema::*;
 
@@ -50,6 +50,7 @@ pub struct Client {
     pub image_url: Option<String>,
     pub owner: Vec<u8>,
     pub privacy_policy: Option<String>,
+    pub terms_of_service: Option<String>,
 }
 
 #[derive(Insertable)]
@@ -62,22 +63,6 @@ pub struct NewClient {
     pub image_url: Option<String>,
     pub owner: Vec<u8>,
     pub privacy_policy: Option<String>,
-}
-
-#[derive(Associations, Queryable, Debug, Clone, PartialEq)]
-#[belongs_to(Client)]
-#[belongs_to(PermissionGroup)]
-#[table_name = "client_permission_requirement"]
-pub struct ClientPermissionRequirement {
-    pub client_id: Vec<u8>,
-    pub permission_group_id: Vec<u8>,
-}
-
-#[derive(Insertable)]
-#[table_name = "client_permission_requirement"]
-pub struct NewClientPermissionRequirement {
-    pub client_id: Vec<u8>,
-    pub permission_group_id: Vec<u8>,
 }
 
 #[derive(Associations, Queryable, Debug, Clone, PartialEq)]
@@ -112,27 +97,11 @@ pub struct NewGroup {
     pub name: String,
 }
 
-#[derive(Associations, Queryable, Debug, Clone, PartialEq)]
-#[belongs_to(Group)]
-#[belongs_to(PermissionGroup)]
-#[table_name = "group_has_permission_group"]
-pub struct GroupHasPermissionGroup {
-    pub group_id: Vec<u8>,
-    pub permission_group_id: Vec<u8>,
-}
-
-#[derive(Insertable)]
-#[table_name = "group_has_permission_group"]
-pub struct NewGroupHasPermissionGroup {
-    pub group_id: Vec<u8>,
-    pub permission_group_id: Vec<u8>,
-}
-
 #[derive(Queryable, Debug, Clone, PartialEq)]
 pub struct Log {
     pub id: Vec<u8>,
     pub initiator_ip: String,
-    pub data: String,
+    pub body: String,
     pub log_type: LogType,
     pub initiator_user: Vec<u8>,
     pub initiator_client: Vec<u8>,
@@ -142,50 +111,10 @@ pub struct Log {
 #[table_name = "log"]
 pub struct NewLog {
     pub initiator_ip: String,
-    pub data: String,
+    pub body: String,
     pub log_type: LogType,
     pub initiator_user: Vec<u8>,
     pub initiator_client: Vec<u8>,
-}
-
-#[derive(Queryable, Debug, Clone, PartialEq)]
-pub struct Permission {
-    pub id: Vec<u8>,
-    pub name: String,
-}
-
-#[derive(Insertable)]
-#[table_name = "permission"]
-pub struct NewPermission {
-    pub name: String,
-}
-
-#[derive(Queryable, Debug, Clone, PartialEq)]
-pub struct PermissionGroup {
-    pub id: Vec<u8>,
-    pub name: String,
-}
-
-#[derive(Insertable)]
-#[table_name = "permission_group"]
-pub struct NewPermissionGroup {
-    pub name: String,
-}
-
-#[derive(Associations, Queryable, Debug, Clone, PartialEq)]
-#[belongs_to(Permission)]
-#[belongs_to(PermissionGroup)]
-#[table_name = "permission_group_has_permission"]
-pub struct PermissionGroupHasPermission {
-    pub permission_id: Vec<u8>,
-    pub permission_group_id: Vec<u8>,
-}
-
-#[derive(Insertable)]
-#[table_name = "permission_group_has_permission"]
-pub struct NewPermissionGroupHasPermission {
-    pub permission_id: Vec<u8>,
-    pub permission_group_id: Vec<u8>,
 }
 
 #[derive(Associations, Queryable, Debug, Clone, PartialEq)]
@@ -218,7 +147,7 @@ pub struct Policy {
 }
 
 #[derive(Insertable)]
-#[table_name = "policy"]
+#[table_name = "meiling_policy"]
 pub struct NewPolicy {
     pub name: String,
     pub description: Option<String>,
