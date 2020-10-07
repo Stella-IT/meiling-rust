@@ -22,7 +22,7 @@ pub fn create_user(
         diesel::insert_into(user)
             .values(model::NewUser::from(new_user))
             .execute(conn)?;
-        user.filter(user_id.eq(new_user_id.to_string().into_bytes()))
+        user.filter(user_id.eq(new_user_id.to_string()))
             .get_result(conn)
     }?;
     Ok(objects::user::User::try_from(inserted_user)?)
@@ -35,7 +35,7 @@ fn get_user(
     use crate::database::schema::user::dsl::*;
     use diesel::prelude::*;
 
-    let binary_user_id: Vec<u8> = uuid.to_string().into_bytes();
+    let binary_user_id = uuid.to_string();
 
     Ok(user.filter(user_id.eq(binary_user_id)).get_result(conn)?)
 }

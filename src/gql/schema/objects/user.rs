@@ -44,7 +44,7 @@ impl TryFrom<NewUser> for meiling::NewUser {
     fn try_from(new_user: NewUser) -> Result<Self, Self::Error> {
         Ok(meiling::NewUser {
             name: new_user.name,
-            user_id: Uuid::from_str(new_user.user_id.as_str())?,
+            user_id: new_user.user_id,
             image_url: new_user.image_url,
             gender: new_user.gender,
         })

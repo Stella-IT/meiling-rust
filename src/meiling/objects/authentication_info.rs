@@ -28,6 +28,7 @@ impl TryFrom<model::AuthenticationInfo> for AuthenticationInfo {
                 enums::AuthenticationMethod::OneTimePassword => {
                     AuthenticationMethod::OneTimePassword
                 }
+                enums::AuthenticationMethod::Fido2 => AuthenticationMethod::Fido2,
             },
             key: authentication_info.key,
             name: authentication_info.name,
@@ -52,6 +53,7 @@ impl From<NewAuthenticationInfo> for model::NewAuthenticationInfo {
                 AuthenticationMethod::OneTimePassword => {
                     enums::AuthenticationMethod::OneTimePassword
                 }
+                AuthenticationMethod::Fido2 => enums::AuthenticationMethod::Fido2,
             },
             key: new_authentication_info.key,
             name: new_authentication_info.name,

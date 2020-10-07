@@ -50,6 +50,7 @@ pub struct Client {
     pub image_url: Option<String>,
     pub owner: Vec<u8>,
     pub privacy_policy: Option<String>,
+    pub terms_of_service: Option<String>,
 }
 
 #[derive(Insertable)]

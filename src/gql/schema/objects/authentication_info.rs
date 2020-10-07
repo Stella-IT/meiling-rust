@@ -27,6 +27,7 @@ impl From<meiling::AuthenticationInfo> for AuthenticationInfo {
                 meiling_enums::AuthenticationMethod::OneTimePassword => {
                     AuthenticationMethod::OneTimePassword
                 }
+                meiling_enums::AuthenticationMethod::Fido2 => AuthenticationMethod::Fido2,
             },
             key: authentication_info.key,
             name: authentication_info.name,
@@ -53,6 +54,7 @@ impl TryFrom<NewAuthenticationInfo> for meiling::NewAuthenticationInfo {
                 AuthenticationMethod::OneTimePassword => {
                     meiling_enums::AuthenticationMethod::OneTimePassword
                 }
+                AuthenticationMethod::Fido2 => meiling_enums::AuthenticationMethod::Fido2,
             },
             key: new_authentication_info.key,
             name: new_authentication_info.name,
