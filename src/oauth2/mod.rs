@@ -19,7 +19,7 @@ pub async fn auth_redirect(req: HttpRequest) -> impl Responder {
 }
 
 #[get("/token")]
-async fn get_token(
+pub async fn get_token(
     context: web::Data<Arc<Context>>,
     req: HttpRequest,
 ) -> Result<HttpResponse, error::OAuth2Error> {
