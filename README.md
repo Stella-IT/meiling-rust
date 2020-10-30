@@ -28,4 +28,5 @@ Install mariadb using `brew install mariadb` and start server using `mysql.serve
 2. Run `cargo run`
 
 ## License
-Hongfarm License (will be FOSS-compatible license later on).
+GNU Affero General Public License v.3.0.  
+See [LICENSE](LICENSE) for more details.  
