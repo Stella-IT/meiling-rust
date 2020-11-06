@@ -9,28 +9,9 @@ a high-performance, self-hosted oAuth2 Authentication Provider for enterprises
 | Clippy Check 📎           | ![Clippy Check 📎](https://github.com/Stella-IT/meiling/workflows/Clippy%20Check%20%F0%9F%93%8E/badge.svg)     |
 
 ## Developers' Guide
-### Rust Environment Configuration
-#### Windows®
-Follow [this direction](https://www.rust-lang.org/learn/get-started).
-
-#### macOS and Linux
-1. Install `gcc` on your platform
-2. Install `rust` and `cargo` using `rustup`   
-   [rustup can be installed from here](https://rustup.rs/)
-
-#### Optional Rust Configuration
-1. You can install [sccache](https://github.com/mozilla/sccache) for improved performance during builds.
-
-### MariaDB Server Configuration
-#### Windows®
-Download [MySQL for Windows](https://dev.mysql.com/downloads/installer/).  
-It will set it up for you.
-
-#### macOS
-Install mariadb using `brew install mariadb` and start server using `mysql.server start`.  
-
-## How to run?
-1. Run `cargo run`
+For guide for installing Meiling engine, Please check [INSTALL.md](INSTALL.md).  
+For configuration before actual development, Please check [DEV_ENVIRONMENT.md](DEV_ENVIRONMENT.md).  
+For contributing guidelines before making PR or any contributions, Please check [CONTRIBUTING.md](CONTRIBUTING.md).  
 
 ## Contributors' Guidelines
 Please refer to [CONTRIBUTING.md](CONTRIBUTING.md) for more information.  
