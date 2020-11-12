@@ -3,6 +3,9 @@
 # Meiling
 a high-performance, self-hosted oAuth2 Authentication Provider for enterprises
 
+## NOTICE
+This project is abandoned due to low-availability of the core-developer of this project.  
+
 ## Build Status
 | Name                      | Status                                                                                                         |
 |---------------------------|----------------------------------------------------------------------------------------------------------------|
